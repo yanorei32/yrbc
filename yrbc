@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ ! $# -eq 1 ]]; then
-	echo yrbc [brainfuck source-code]
+	>&2 echo yrbc [brainfuck source-code]
 	exit 1
 fi
 
@@ -72,7 +72,7 @@ for operator in $(cat "$1" | fold -s1); do
 			;;
 
 		*)
-			echo "warning: ignore case '$operator'"
+			>&2 echo "warning: ignore case '$operator'"
 			program_address=$(expr $program_address - 1)
 			;;
 	esac
@@ -81,7 +81,7 @@ done
 cat "$RDIR/program_end.s"
 
 if [[ $bracket_pair_counter -ne 0 ]]; then
-	echo "error: bracket pair missmatch"
+	>&2 echo "error: bracket pair missmatch"
 	exit 1
 fi
 
