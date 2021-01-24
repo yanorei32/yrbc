@@ -1,4 +1,4 @@
 	# + operator
-	inc		DWORD PTR [rax]
+	inc		QWORD PTR [rax]
 
 

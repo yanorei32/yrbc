@@ -7,7 +7,7 @@
 
 	subq	rsp, 8
 	add		QWORD PTR [rbp-8], 8
-	mov		DWORD PTR [rax], 0
+	mov		QWORD PTR [rax], 0
 
 _GT_##ID##_RAM_RESERVED:
 

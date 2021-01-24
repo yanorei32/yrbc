@@ -17,6 +17,6 @@ main:
 
 	# initialize data memory[0]
 	mov		rax, [rbp-16]
-	mov		DWORD PTR [rax], 0
+	mov		QWORD PTR [rax], 0
 
 
