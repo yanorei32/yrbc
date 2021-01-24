@@ -9,13 +9,17 @@ program_address=0
 bracket_pair=()
 bracket_depth=0
 
-if [[ "`uname`" = CYGWIN* ]]; then
-	FIRST_PARAMETER_REGISTER=cx
-else
-	FIRST_PARAMETER_REGISTER=di
-fi
 
-RDIR=$(cd $(dirname $0) && pwd)/resources/
+if [[ "`uname -a`" = *i686* ]]; then
+	RDIR=$(cd $(dirname $0) && pwd)/resources_86cdecl/
+else
+	RDIR=$(cd $(dirname $0) && pwd)/resources/
+	if [[ "`uname`" = CYGWIN* ]]; then
+		FIRST_PARAMETER_REGISTER=cx
+	else
+		FIRST_PARAMETER_REGISTER=di
+	fi
+fi
 
 cat "$RDIR/program_start.s"
 
