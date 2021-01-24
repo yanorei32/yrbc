@@ -5,14 +5,17 @@ if [[ ! $# -eq 1 ]]; then
 	exit 1
 fi
 
-gt_counter=0
-bracket_pair_counter=0
+program_address=0
+bracket_pair=()
+bracket_depth=0
 
 RDIR=$(cd $(dirname $0) && pwd)/resources/
 
 cat "$RDIR/program_start.s"
 
 for operator in $(cat "$1" | fold -s1); do
+	program_address=$(expr $program_address + 1)
+
 	case "$operator" in
 		"+")
 			cat "$RDIR/operator_plus.s"
@@ -23,22 +26,26 @@ for operator in $(cat "$1" | fold -s1); do
 			;;
 
 		"[")
-			bracket_pair_counter=$(expr $bracket_pair_counter + 1)
+			bracket_pair+=("$program_address")
+			bracket_depth=$(expr $bracket_depth + 1)
+
 			cat "$RDIR/operator_bracket_open.s" |
-				sed "s/##NUMBER_OF_BRACKET_PAIR##/$bracket_pair_counter/"
+				sed "s/##ID##/$program_address/"
 			;;
 
 		"]")
-			cat "$RDIR/operator_bracket_close.s" |
-				sed "s/##NUMBER_OF_BRACKET_PAIR##/$bracket_pair_counter/"
+			bracket_depth=$(expr $bracket_depth - 1)
 
-			bracket_pair_counter=$(expr $bracket_pair_counter - 1)
+			cat "$RDIR/operator_bracket_close.s" |
+				sed "s/##ID##/${bracket_pair[$bracket_depth]}/"
+
+			unset "bracket_pair[$bracket_depth]"
+
 			;;
 
 		">")
-			gt_counter=$(expr $gt_counter + 1)
 			cat "$RDIR/operator_gt.s" |
-				sed "s/##NUMBER_OF_GT##/$gt_counter/"
+				sed "s/##ID##/$program_address/"
 			;;
 
 		"<")
@@ -55,6 +62,7 @@ for operator in $(cat "$1" | fold -s1); do
 
 		*)
 			echo "warning: ignore case '$operator'"
+			program_address=$(expr $program_address - 1)
 			;;
 	esac
 done
