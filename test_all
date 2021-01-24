@@ -1,0 +1,28 @@
+#!/bin/bash
+
+TEMP=$(mktemp)
+DIR=$(cd $(dirname $0) && pwd)
+
+for file in $(find "$DIR/tests" -name "*.bf"); do
+	echo "TestCase: $file"
+
+	echo "  - compiling..."
+	"$DIR/yrbc" "$file" > $TEMP.s
+
+	echo "  - assemble/link..."
+	gcc $TEMP.s -o $TEMP.out
+
+	echo "  - run..."
+	cat "$file.in.txt" | $TEMP.out > $TEMP.txt
+
+	echo "  - check..."
+	diff $TEMP.txt "$file.out.txt"
+	DIFF=$?
+
+	if [[ $DIFF -eq 0 ]]; then
+		echo "  - OK"
+	else
+		echo "  - FAIL"
+	fi
+done
+
