@@ -1,0 +1,68 @@
+#!/bin/bash
+
+if [[ ! $# -eq 1 ]]; then
+	echo yrbc [brainfuck source-code]
+	exit 1
+fi
+
+gt_counter=0
+bracket_pair_counter=0
+
+RDIR=$(cd $(dirname $0) && pwd)/resources/
+
+cat "$RDIR/program_start.s"
+
+for operator in $(cat "$1" | fold -s1); do
+	case "$operator" in
+		"+")
+			cat "$RDIR/operator_plus.s"
+			;;
+
+		"-")
+			cat "$RDIR/operator_minus.s"
+			;;
+
+		"[")
+			bracket_pair_counter=$(expr $bracket_pair_counter + 1)
+			cat "$RDIR/operator_bracket_open.s" |
+				sed "s/##NUMBER_OF_BRACKET_PAIR##/$bracket_pair_counter/"
+			;;
+
+		"]")
+			cat "$RDIR/operator_bracket_close.s" |
+				sed "s/##NUMBER_OF_BRACKET_PAIR##/$bracket_pair_counter/"
+
+			bracket_pair_counter=$(expr $bracket_pair_counter - 1)
+			;;
+
+		">")
+			gt_counter=$(expr $gt_counter + 1)
+			cat "$RDIR/operator_gt.s" |
+				sed "s/##NUMBER_OF_GT##/$gt_counter/"
+			;;
+
+		"<")
+			cat "$RDIR/operator_lt.s"
+			;;
+
+		".")
+			cat "$RDIR/operator_dot.s"
+			;;
+
+		",")
+			cat "$RDIR/operator_comma.s"
+			;;
+
+		*)
+			echo "warning: ignore case '$operator'"
+			;;
+	esac
+done
+
+cat "$RDIR/program_end.s"
+
+if [[ $bracket_pair_counter -ne 0 ]]; then
+	echo "error: bracket pair missmatch"
+	exit 1
+fi
+
