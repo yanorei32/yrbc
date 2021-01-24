@@ -9,7 +9,7 @@ program_address=0
 bracket_pair=()
 bracket_depth=0
 
-if [ "`uname`" = CYGWIN* ]; then
+if [[ "`uname`" = CYGWIN* ]]; then
 	FIRST_PARAMETER_REGISTER=cx
 else
 	FIRST_PARAMETER_REGISTER=di
