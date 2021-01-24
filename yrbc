@@ -9,6 +9,12 @@ program_address=0
 bracket_pair=()
 bracket_depth=0
 
+if [ "`uname`" = CYGWIN* ]; then
+	FIRST_PARAMETER_REGISTER=cx
+else
+	FIRST_PARAMETER_REGISTER=di
+fi
+
 RDIR=$(cd $(dirname $0) && pwd)/resources/
 
 cat "$RDIR/program_start.s"
@@ -53,7 +59,8 @@ for operator in $(cat "$1" | fold -s1); do
 			;;
 
 		".")
-			cat "$RDIR/operator_dot.s"
+			cat "$RDIR/operator_dot.s" |
+				sed "s/##FIRST_PARAMETER_REGISTER##/$FIRST_PARAMETER_REGISTER/"
 			;;
 
 		",")
