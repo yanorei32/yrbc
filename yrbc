@@ -12,6 +12,8 @@ bracket_depth=0
 
 if [[ "`uname -a`" = *i686* ]]; then
 	RDIR=$(cd $(dirname $0) && pwd)/resources_86cdecl/
+elif [[ "`uname -a`" = *aarch64* ]]; then
+	RDIR=$(cd $(dirname $0) && pwd)/resources_aarch64/
 else
 	RDIR=$(cd $(dirname $0) && pwd)/resources/
 	if [[ "`uname`" = CYGWIN* ]]; then
