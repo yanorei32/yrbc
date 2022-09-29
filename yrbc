@@ -25,7 +25,7 @@ fi
 
 cat "$RDIR/program_start.s"
 
-for operator in $(cat "$1" | fold -s1); do
+for operator in $(cat "$1" | fold -w1); do
 	program_address=$(expr $program_address + 1)
 
 	case "$operator" in
